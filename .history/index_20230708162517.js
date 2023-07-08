@@ -30,30 +30,11 @@ async function run() {
 
             //get booking on specific date
             const bookingQuery = { appointmentDate: date }
-            const alreadyBooked = await bookingsCollection.find(bookingQuery).toArray()
-
-            options.forEach(option => {
-                const optionBooked = alreadyBooked.filter(book => book.treatment === option.name)
-                const bookedSlots = optionBooked.map(book => book.slot)
-                const remainingSlots = option.slots.filter(slot => !bookedSlots.includes(slot))
-                option.slots = remainingSlots;
-            })
-
             res.send(options)
         })
 
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
-            const query = {
-                appointmentDate: booking.appointmentDate,
-                treatment: booking.treatment,
-                email: booking.email
-            }
-            const alreadyBooked = await bookingsCollection.find(query).toArray()
-            if (alreadyBooked.length) {
-                const message = `You already have booking on ${booking.appointmentDate}`
-                return res.send({ acknowledged: false, message })
-            }
             const result = await bookingsCollection.insertOne(booking)
             res.send(result)
         })

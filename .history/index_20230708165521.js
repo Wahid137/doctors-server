@@ -51,8 +51,7 @@ async function run() {
             }
             const alreadyBooked = await bookingsCollection.find(query).toArray()
             if (alreadyBooked.length) {
-                const message = `You already have booking on ${booking.appointmentDate}`
-                return res.send({ acknowledged: false, message })
+                const message = 
             }
             const result = await bookingsCollection.insertOne(booking)
             res.send(result)
