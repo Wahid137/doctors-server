@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
@@ -17,30 +16,11 @@ console.log(uri)
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, { serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true, } });
 
-//verify token after getting token from local storage
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).send({ message: 'unauthorized access' })
-    }
-    const token = authHeader.split(' ')[1]
-    jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-        if (err) {
-            return res.status(403).send({ message: 'forbidden access' })
-        }
-        req.decoded = decoded;
-        next();
-    })
-
-}
-
 async function run() {
     try {
         const appointmentsCollection = client.db('doctorsProject').collection('appointments');
         const bookingsCollection = client.db('doctorsProject').collection('bookings');
-        const usersCollection = client.db('doctorsProject').collection('users');
 
-        //to find available option with available slots
         app.get('/appointments', async (req, res) => {
             const date = req.query.date;
             const email = req.query.email;
@@ -49,11 +29,8 @@ async function run() {
             const query = {}
             const options = await appointmentsCollection.find(query).toArray()
 
-            //get booking on specific date for specific email
-            const bookingQuery = {
-                appointmentDate: date,
-                email: email
-            }
+            //get booking on specific date
+            const bookingQuery = { appointmentDate: date }
             const alreadyBooked = await bookingsCollection.find(bookingQuery).toArray()
 
             options.forEach(option => {
@@ -66,22 +43,13 @@ async function run() {
             res.send(options)
         })
 
-
-        //to get bookings of bookingModal information
-        app.get('/bookings', verifyJWT, async (req, res) => {
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email;
-            const decodedEmail = req.decoded.email;
-
-            if (decodedEmail !== email) {
-                return res.status(403).send({ message: 'forbidden access' })
-            }
-
             const query = { email: email }
             const bookings = await bookingsCollection.find(query).toArray()
             res.send(bookings)
         })
 
-        //bookingModal information added in database
         app.post('/bookings', async (req, res) => {
             const booking = req.body;
             const query = {
@@ -95,25 +63,6 @@ async function run() {
                 return res.send({ acknowledged: false, message })
             }
             const result = await bookingsCollection.insertOne(booking)
-            res.send(result)
-        })
-
-        //give token for a user, at first check that the user have in usersCollection
-        app.get('/jwt', async (req, res) => {
-            const email = req.query.email;
-            const query = { email: email }
-            const user = await usersCollection.findOne(query);
-            if (user) {
-                const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
-                return res.send({ accessToken: token })
-            }
-            res.status(403).send({ accessToken: '' })
-        })
-
-        //store users information from sign up page
-        app.post('/users', async (req, res) => {
-            const user = req.body;
-            const result = await usersCollection.insertOne(user);
             res.send(result)
         })
 

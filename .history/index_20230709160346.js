@@ -33,7 +33,6 @@ function verifyJWT(req, res, next) {
     })
 
 }
-
 async function run() {
     try {
         const appointmentsCollection = client.db('doctorsProject').collection('appointments');
@@ -68,14 +67,8 @@ async function run() {
 
 
         //to get bookings of bookingModal information
-        app.get('/bookings', verifyJWT, async (req, res) => {
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email;
-            const decodedEmail = req.decoded.email;
-
-            if (decodedEmail !== email) {
-                return res.status(403).send({ message: 'forbidden access' })
-            }
-
             const query = { email: email }
             const bookings = await bookingsCollection.find(query).toArray()
             res.send(bookings)

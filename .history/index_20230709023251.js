@@ -17,23 +17,6 @@ console.log(uri)
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, { serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true, } });
 
-//verify token after getting token from local storage
-function verifyJWT(req, res, next) {
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-        return res.status(401).send({ message: 'unauthorized access' })
-    }
-    const token = authHeader.split(' ')[1]
-    jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-        if (err) {
-            return res.status(403).send({ message: 'forbidden access' })
-        }
-        req.decoded = decoded;
-        next();
-    })
-
-}
-
 async function run() {
     try {
         const appointmentsCollection = client.db('doctorsProject').collection('appointments');
@@ -68,14 +51,8 @@ async function run() {
 
 
         //to get bookings of bookingModal information
-        app.get('/bookings', verifyJWT, async (req, res) => {
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email;
-            const decodedEmail = req.decoded.email;
-
-            if (decodedEmail !== email) {
-                return res.status(403).send({ message: 'forbidden access' })
-            }
-
             const query = { email: email }
             const bookings = await bookingsCollection.find(query).toArray()
             res.send(bookings)
@@ -98,7 +75,7 @@ async function run() {
             res.send(result)
         })
 
-        //give token for a user, at first check that the user have in usersCollection
+        //give token for a user
         app.get('/jwt', async (req, res) => {
             const email = req.query.email;
             const query = { email: email }

@@ -68,7 +68,7 @@ async function run() {
 
 
         //to get bookings of bookingModal information
-        app.get('/bookings', verifyJWT, async (req, res) => {
+        app.get('/bookings', async (req, res) => {
             const email = req.query.email;
             const decodedEmail = req.decoded.email;
 
