@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express()
 
@@ -50,14 +50,6 @@ async function run() {
             }
             next();
         }
-
-        //in appointmentsCollection have name,slots field need name field only
-        app.get('/appointmentSpecialty', async (req, res) => {
-            const query = {}
-            const result = await appointmentsCollection.find(query).project({ name: 1 }).toArray()
-            res.send(result)
-        })
-
 
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
@@ -135,14 +127,6 @@ async function run() {
             const query = {};
             const users = await usersCollection.find(query).toArray();
             res.send(users)
-        })
-
-        //from the users list check that the user is admin or not
-        app.get('/users/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email }
-            const user = await usersCollection.findOne(query)
-            res.send({ isAdmin: user?.role === 'admin' })
         })
 
         //store users information from sign up page

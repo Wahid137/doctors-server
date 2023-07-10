@@ -3,7 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express()
 
@@ -39,25 +39,6 @@ async function run() {
         const appointmentsCollection = client.db('doctorsProject').collection('appointments');
         const bookingsCollection = client.db('doctorsProject').collection('bookings');
         const usersCollection = client.db('doctorsProject').collection('users');
-
-        //make sure you use verifyAdmin after verifyJWT
-        const verifyAdmin = async (req, res, next) => {
-            const decodedEmail = req.decoded.email;
-            const query = { email: decodedEmail }
-            const user = await usersCollection.findOne(query);
-            if (user?.role !== 'admin') {
-                return res.status(403).send({ message: 'Forbidden access' })
-            }
-            next();
-        }
-
-        //in appointmentsCollection have name,slots field need name field only
-        app.get('/appointmentSpecialty', async (req, res) => {
-            const query = {}
-            const result = await appointmentsCollection.find(query).project({ name: 1 }).toArray()
-            res.send(result)
-        })
-
 
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
@@ -129,40 +110,16 @@ async function run() {
             res.status(403).send({ accessToken: '' })
         })
 
-
-        //get all users from database
         app.get('/users', async (req, res) => {
             const query = {};
             const users = await usersCollection.find(query).toArray();
             res.send(users)
         })
 
-        //from the users list check that the user is admin or not
-        app.get('/users/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email }
-            const user = await usersCollection.findOne(query)
-            res.send({ isAdmin: user?.role === 'admin' })
-        })
-
         //store users information from sign up page
         app.post('/users', async (req, res) => {
             const user = req.body;
             const result = await usersCollection.insertOne(user);
-            res.send(result)
-        })
-
-        //make admin if user's role is admin then user can make admin 
-        app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
-            const id = req.params.id;
-            const filter = { _id: new ObjectId(id) }
-            const options = { upsert: true };
-            const updatedDoc = {
-                $set: {
-                    role: 'admin'
-                }
-            }
-            const result = await usersCollection.updateOne(filter, updatedDoc, options)
             res.send(result)
         })
 

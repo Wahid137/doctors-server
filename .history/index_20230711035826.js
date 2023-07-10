@@ -58,7 +58,6 @@ async function run() {
             res.send(result)
         })
 
-
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
             const date = req.query.date;

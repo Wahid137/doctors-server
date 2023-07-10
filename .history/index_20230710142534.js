@@ -51,14 +51,6 @@ async function run() {
             next();
         }
 
-        //in appointmentsCollection have name,slots field need name field only
-        app.get('/appointmentSpecialty', async (req, res) => {
-            const query = {}
-            const result = await appointmentsCollection.find(query).project({ name: 1 }).toArray()
-            res.send(result)
-        })
-
-
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
             const date = req.query.date;
@@ -137,14 +129,6 @@ async function run() {
             res.send(users)
         })
 
-        //from the users list check that the user is admin or not
-        app.get('/users/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email }
-            const user = await usersCollection.findOne(query)
-            res.send({ isAdmin: user?.role === 'admin' })
-        })
-
         //store users information from sign up page
         app.post('/users', async (req, res) => {
             const user = req.body;
@@ -153,7 +137,7 @@ async function run() {
         })
 
         //make admin if user's role is admin then user can make admin 
-        app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
+        app.put('/users/admin/:id', async (req, res) => {
             const id = req.params.id;
             const filter = { _id: new ObjectId(id) }
             const options = { upsert: true };

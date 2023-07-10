@@ -51,14 +51,6 @@ async function run() {
             next();
         }
 
-        //in appointmentsCollection have name,slots field need name field only
-        app.get('/appointmentSpecialty', async (req, res) => {
-            const query = {}
-            const result = await appointmentsCollection.find(query).project({ name: 1 }).toArray()
-            res.send(result)
-        })
-
-
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
             const date = req.query.date;
@@ -139,8 +131,8 @@ async function run() {
 
         //from the users list check that the user is admin or not
         app.get('/users/admin/:email', async (req, res) => {
-            const email = req.params.email;
-            const query = { email: email }
+            const email = req.query.email;
+            const query = { email }
             const user = await usersCollection.findOne(query)
             res.send({ isAdmin: user?.role === 'admin' })
         })

@@ -51,14 +51,6 @@ async function run() {
             next();
         }
 
-        //in appointmentsCollection have name,slots field need name field only
-        app.get('/appointmentSpecialty', async (req, res) => {
-            const query = {}
-            const result = await appointmentsCollection.find(query).project({ name: 1 }).toArray()
-            res.send(result)
-        })
-
-
         //to find available option with available slots
         app.get('/appointments', async (req, res) => {
             const date = req.query.date;
