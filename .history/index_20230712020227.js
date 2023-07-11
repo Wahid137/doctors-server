@@ -160,21 +160,6 @@ async function run() {
             res.send(result)
         })
 
-        //get doctors information from database
-        app.get('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
-            const query = {};
-            const doctors = await doctorsCollection.find(query).toArray()
-            res.send(doctors)
-        })
-
-        //delete doctor from database
-        app.delete('/doctors/:id', verifyJWT, verifyAdmin, async (req, res) => {
-            const id = req.params.id;
-            const filter = { _id: new ObjectId(id) }
-            const result = await doctorsCollection.deleteOne(filter)
-            res.send(result)
-        })
-
         //make admin if user's role is admin then user can make admin 
         app.put('/users/admin/:id', verifyJWT, verifyAdmin, async (req, res) => {
             const id = req.params.id;
