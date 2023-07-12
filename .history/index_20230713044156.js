@@ -233,7 +233,7 @@ async function run() {
         })
 
         //store payment information and update bookings 
-        app.post('/payments', verifyJWT, async (req, res) => {
+        app.post('/payments', async (req, res) => {
             const payment = req.body;
             const result = await paymentsCollection.insertOne(payment)
             const id = payment.bookingId;

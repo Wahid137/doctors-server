@@ -200,21 +200,21 @@ async function run() {
             res.send(result)
         })
 
-        /*     //temporary to update price field on appointment options
-            app.get('/addprice', async (req, res) => {
-                const filter = {}
-                const options = { upsert: true }
-                const updatedDoc = {
-                    $set: {
-                        price: 99
-                    }
+        //temporary to update price field on appointment options
+        app.get('/addprice', async (req, res) => {
+            const filter = {}
+            const options = { upsert: true }
+            const updatedDoc = {
+                $set: {
+                    price: 99
                 }
-                const result = await appointmentsCollection.updateMany(filter, updatedDoc, options)
-                res.send(result)
-            }) */
+            }
+            const result = await appointmentsCollection.updateMany(filter, updatedDoc, options)
+            res.send(result)
+        })
 
         //create payment intent give client secret
-        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
+        app.post('/create-payment-intent', async (req, res) => {
             const booking = req.body;
             const price = booking.price;
             const amount = price * 100;
@@ -233,7 +233,7 @@ async function run() {
         })
 
         //store payment information and update bookings 
-        app.post('/payments', verifyJWT, async (req, res) => {
+        app.post('/payments', async (req, res) => {
             const payment = req.body;
             const result = await paymentsCollection.insertOne(payment)
             const id = payment.bookingId;
