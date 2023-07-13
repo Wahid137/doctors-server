@@ -25,12 +25,12 @@ function sendBookingEmail(booking) {
     const { email, treatment, appointmentDate, slot } = booking
     const auth = {
         auth: {
-            api_key: process.env.EMAIL_SEND_KEY,
-            domain: process.env.EMAIL_SEND_DOMAIN
+            api_key: 'key-1234123412341234',
+            domain: 'one of your domain names listed at your https://app.mailgun.com/app/sending/domains'
         }
     }
 
-    const transporter = nodemailer.createTransport(mg(auth));
+    const nodemailerMailgun = nodemailer.createTransport(mg(auth));
 
     // let transporter = nodemailer.createTransport({
     //     host: 'smtp.sendgrid.net',
@@ -41,7 +41,7 @@ function sendBookingEmail(booking) {
     //     }
     // })
     transporter.sendMail({
-        from: "wahidahmedshanto@gmail.com", // verified sender email
+        from: "SENDER_EMAIL", // verified sender email
         to: email, // recipient email
         subject: `Your appointment for ${treatment} is confirmed`, // Subject line
         text: "Hello world!", // plain text body

@@ -21,27 +21,18 @@ console.log(uri)
 const client = new MongoClient(uri, { serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true, } });
 
 //send email in mail gun
-function sendBookingEmail(booking) {
+/* function sendBookingEmail(booking) {
     const { email, treatment, appointmentDate, slot } = booking
-    const auth = {
+    let transporter = nodemailer.createTransport({
+        host: 'smtp.sendgrid.net',
+        port: 587,
         auth: {
-            api_key: process.env.EMAIL_SEND_KEY,
-            domain: process.env.EMAIL_SEND_DOMAIN
+            user: "apikey",
+            pass: process.env.SENDGRID_API_KEY
         }
-    }
-
-    const transporter = nodemailer.createTransport(mg(auth));
-
-    // let transporter = nodemailer.createTransport({
-    //     host: 'smtp.sendgrid.net',
-    //     port: 587,
-    //     auth: {
-    //         user: "apikey",
-    //         pass: process.env.SENDGRID_API_KEY
-    //     }
-    // })
+    })
     transporter.sendMail({
-        from: "wahidahmedshanto@gmail.com", // verified sender email
+        from: "SENDER_EMAIL", // verified sender email
         to: email, // recipient email
         subject: `Your appointment for ${treatment} is confirmed`, // Subject line
         text: "Hello world!", // plain text body
@@ -59,7 +50,7 @@ function sendBookingEmail(booking) {
             console.log('Email sent: ' + info.response);
         }
     });
-}
+} */
 
 
 //verify token after getting token from local storage

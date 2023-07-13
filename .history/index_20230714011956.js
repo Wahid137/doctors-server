@@ -2,8 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const jwt = require('jsonwebtoken');
-const nodemailer = require("nodemailer");
-const mg = require('nodemailer-mailgun-transport');
+const nodemailer = require("nodemailer")
 const port = process.env.PORT || 5000;
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
@@ -19,48 +18,6 @@ const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@clu
 console.log(uri)
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, { serverApi: { version: ServerApiVersion.v1, strict: true, deprecationErrors: true, } });
-
-//send email in mail gun
-function sendBookingEmail(booking) {
-    const { email, treatment, appointmentDate, slot } = booking
-    const auth = {
-        auth: {
-            api_key: process.env.EMAIL_SEND_KEY,
-            domain: process.env.EMAIL_SEND_DOMAIN
-        }
-    }
-
-    const transporter = nodemailer.createTransport(mg(auth));
-
-    // let transporter = nodemailer.createTransport({
-    //     host: 'smtp.sendgrid.net',
-    //     port: 587,
-    //     auth: {
-    //         user: "apikey",
-    //         pass: process.env.SENDGRID_API_KEY
-    //     }
-    // })
-    transporter.sendMail({
-        from: "wahidahmedshanto@gmail.com", // verified sender email
-        to: email, // recipient email
-        subject: `Your appointment for ${treatment} is confirmed`, // Subject line
-        text: "Hello world!", // plain text body
-        html: `
-        <h3>Your Appointment is Confirmed</h3>
-        <div>
-            <P>Your appointment for treatment: ${treatment}</p>
-            <p>Please Visit us on ${appointmentDate} at ${slot}</p>
-            <p>Thanks from Doctors Portal.</P>
-        `, // html body
-    }, function (error, info) {
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
-}
-
 
 //verify token after getting token from local storage
 function verifyJWT(req, res, next) {
@@ -171,8 +128,6 @@ async function run() {
                 return res.send({ acknowledged: false, message })
             }
             const result = await bookingsCollection.insertOne(booking)
-            //send email about appointment confirmation
-            sendBookingEmail(booking)
             res.send(result)
         })
 

@@ -25,7 +25,7 @@ function sendBookingEmail(booking) {
     const { email, treatment, appointmentDate, slot } = booking
     const auth = {
         auth: {
-            api_key: process.env.EMAIL_SEND_KEY,
+            api_key: 'key-1234123412341234',
             domain: process.env.EMAIL_SEND_DOMAIN
         }
     }
@@ -41,7 +41,7 @@ function sendBookingEmail(booking) {
     //     }
     // })
     transporter.sendMail({
-        from: "wahidahmedshanto@gmail.com", // verified sender email
+        from: "SENDER_EMAIL", // verified sender email
         to: email, // recipient email
         subject: `Your appointment for ${treatment} is confirmed`, // Subject line
         text: "Hello world!", // plain text body

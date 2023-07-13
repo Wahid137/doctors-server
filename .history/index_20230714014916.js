@@ -41,7 +41,7 @@ function sendBookingEmail(booking) {
     //     }
     // })
     transporter.sendMail({
-        from: "wahidahmedshanto@gmail.com", // verified sender email
+        from: "SENDER_EMAIL", // verified sender email
         to: email, // recipient email
         subject: `Your appointment for ${treatment} is confirmed`, // Subject line
         text: "Hello world!", // plain text body
