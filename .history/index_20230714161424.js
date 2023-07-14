@@ -218,13 +218,14 @@ async function run() {
             const result = await usersCollection.deleteOne(filter)
             res.send(result)
         })
-            /
-            //store doctors in database
-            app.post('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
-                const doctor = req.body;
-                const result = await doctorsCollection.insertOne(doctor);
-                res.send(result)
-            })
+
+
+        //store doctors in database
+        app.post('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
+            const doctor = req.body;
+            const result = await doctorsCollection.insertOne(doctor);
+            res.send(result)
+        })
 
         //get doctors information from database
         app.get('/doctors', verifyJWT, verifyAdmin, async (req, res) => {
